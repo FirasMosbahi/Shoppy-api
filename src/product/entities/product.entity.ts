@@ -19,9 +19,9 @@ export class Product {
   @OneToMany(
     (type) => CartProduct,
     (cartProduct: CartProduct) => cartProduct.product,
-    { cascade: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' },
+    { onDelete: 'CASCADE', onUpdate: 'CASCADE' },
   )
-  carts: CartProduct[];
+  carts: CartProduct[] | null;
   static createProductFromDto = (
     createProductDto: CreateProductDto,
   ): Product => {

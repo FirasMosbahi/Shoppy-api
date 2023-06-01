@@ -8,6 +8,7 @@ import { Repository, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Cart } from '../cart/entities/cart.entity';
 
 @Injectable()
 export class UserService {
@@ -16,18 +17,13 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const existantUser = await this.userRepository.findOne({
-      where: { mail: createUserDto.mail },
-    });
-    if (existantUser) {
-      throw new BadRequestException('A user with this  email already exists');
-    }
+  async create(createUserDto: CreateUserDto): Promise<any> {
     const user = new User();
     user.mail = createUserDto.mail;
     user.password = createUserDto.password;
-    user.reviews = [];
-    user.cart = null;
+    // const cart = new Cart();
+    // cart.owner = user;
+    // user.cart = cart;
     return await this.userRepository.save(user);
   }
 

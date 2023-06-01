@@ -16,7 +16,7 @@ export class Review {
   comment: string;
   @CreateDateColumn()
   createdAt: Date;
-  @ManyToOne((type) => User)
+  @ManyToOne((type) => User, { eager: true })
   @JoinColumn({ name: 'owner', referencedColumnName: 'id' })
   owner: User;
 }

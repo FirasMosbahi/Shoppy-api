@@ -15,7 +15,7 @@ export class Cart {
   @OneToOne((type) => User, { cascade: true })
   @JoinColumn({ name: 'ownerId', referencedColumnName: 'id' })
   owner: User;
-  @ManyToMany((type) => CartProduct, { cascade: true })
+  @ManyToMany((type) => CartProduct, { cascade: true, eager: true })
   @JoinTable({
     name: 'carts-products',
     joinColumn: {
@@ -27,5 +27,5 @@ export class Cart {
       referencedColumnName: 'id',
     },
   })
-  products: CartProduct[];
+  products: CartProduct[] | null;
 }

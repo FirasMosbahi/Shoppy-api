@@ -24,5 +24,5 @@ export class User {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  reviews: Review[];
+  reviews: Review[] | null;
 }
