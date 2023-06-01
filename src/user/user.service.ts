@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -13,6 +17,12 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const existantUser = await this.userRepository.findOne({
+      where: { mail: createUserDto.mail },
+    });
+    if (existantUser) {
+      throw new BadRequestException('A user with this  email already exists');
+    }
     const user = new User();
     user.mail = createUserDto.mail;
     user.password = createUserDto.password;
@@ -38,5 +48,15 @@ export class UserService {
 
   async remove(id: string): Promise<void> {
     await this.userRepository.delete(id);
+  }
+  async loginUser(userCredentials: CreateUserDto) {
+    const user = await this.userRepository.findOne({
+      where: { ...userCredentials },
+    });
+    if (user) {
+      return { result: 'logged in successfuly' };
+    } else {
+      throw new NotFoundException('No user name with those credentials');
+    }
   }
 }

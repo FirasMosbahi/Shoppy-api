@@ -5,8 +5,9 @@ import { Cart } from './entities/cart.entity';
 import { Product } from '../product/entities/product.entity';
 import { CartProduct } from './entities/cart-product.entity';
 import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
 import { User } from '../user/entities/user.entity';
+import { AddProductToCartDto } from './dto/add-product-to-cart.dto';
+import { DeleteProductFromCartDto } from './dto/delete-product-from-cart.dto';
 
 @Injectable()
 export class CartService {
@@ -64,35 +65,32 @@ export class CartService {
   }
 
   async addProductToCart(
-    ownerId: string,
-    productId: string,
-    quantity: number,
+    addProductToCartDto: AddProductToCartDto,
   ): Promise<Cart> {
-    const cart = await this.findCartByOwnerId(ownerId);
+    const cart = await this.findCartByOwnerId(addProductToCartDto.ownerId);
     const product = await this.productRepository.findOne({
-      where: { id: productId },
+      where: { id: addProductToCartDto.productId },
     });
     if (!product) {
       throw new NotFoundException('Product not found');
     }
 
     const cartProduct = new CartProduct();
-    cartProduct.quantity = quantity;
+    cartProduct.quantity = addProductToCartDto.quantity;
     cartProduct.cart = cart;
     cartProduct.product = product;
 
     await this.cartProductRepository.save(cartProduct);
 
-    return this.findCartByOwnerId(ownerId);
+    return this.findCartByOwnerId(addProductToCartDto.ownerId);
   }
   async deleteProductFromCart(
-    ownerId: string,
-    cartProductId: string,
+    deleteProductFromCart: DeleteProductFromCartDto,
   ): Promise<Cart> {
     const cartProduct = await this.cartProductRepository.findOne({
-      where: { id: cartProductId },
+      where: { id: deleteProductFromCart.cartProductId },
     });
     await this.cartProductRepository.delete(cartProduct);
-    return this.findCartByOwnerId(ownerId);
+    return this.findCartByOwnerId(deleteProductFromCart.ownerId);
   }
 }

@@ -7,7 +7,7 @@ import { User } from '../user/entities/user.entity';
 import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Injectable()
-export class ReviewService {
+export class ReviewsService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
