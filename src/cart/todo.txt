@@ -1,6 +1,0 @@
-add the entite , dto and service related to this module (cart):
-1/ entity :id,user,products
-   relation ManyToOne with user
-   relation ManyToMany with product (the relation have an attribute named quantity)
-2/ Crud Service (create/read/update/delete)
-// use uuid for the id

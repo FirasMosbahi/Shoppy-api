@@ -1,1 +1,4 @@
-export class CreateReviewDto {}
+export class CreateReviewDto {
+  comment: string;
+  ownerId: string;
+}
