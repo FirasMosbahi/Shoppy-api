@@ -1,0 +1,4 @@
+add the entite , dto and service related to this module (user):
+1/ entity : id,mail,password
+2/ Crud Service (create/read/update/delete)
+// use uuid for the id

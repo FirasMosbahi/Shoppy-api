@@ -1,0 +1,4 @@
+add the entite , dto and service related to this module (review):
+1/ entity : id,creator,description,creationDate
+2/ Crud Service (create/read/update/delete)
+// use uuid for the id

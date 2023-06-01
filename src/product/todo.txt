@@ -1,0 +1,4 @@
+add the entite , dto and service related to this module (product):
+1/ entity : id,name,price,description,quantity,photo(string)
+2/ Crud Service (create/read/update/delete)
+// use uuid for the id
