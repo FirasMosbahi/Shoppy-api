@@ -11,6 +11,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Cart } from "../cart/entities/cart.entity";
 
 @Injectable()
 export class UserService {
@@ -26,7 +27,7 @@ export class UserService {
     const hash = await bcrypt.hash(createUserDto.password, 10);
     user.password = hash;
     console.log(user);
-    return await this.userRepository.save(user);
+    await this.userRepository.save(user);
   }
 
   async findAll(): Promise<User[]> {
