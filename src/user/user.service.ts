@@ -2,28 +2,30 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Cart } from '../cart/entities/cart.entity';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<any> {
     const user = new User();
     user.mail = createUserDto.mail;
-    user.password = createUserDto.password;
-    // const cart = new Cart();
-    // cart.owner = user;
-    // user.cart = cart;
+    const hash = await bcrypt.hash(createUserDto.password, 10);
+    user.password = hash;
+    console.log(user);
     return await this.userRepository.save(user);
   }
 
@@ -47,10 +49,24 @@ export class UserService {
   }
   async loginUser(userCredentials: CreateUserDto) {
     const user = await this.userRepository.findOne({
-      where: { ...userCredentials },
+      where: { mail: userCredentials.mail },
     });
+    console.log(user);
     if (user) {
-      return { result: 'logged in successfuly' };
+      // const hashedCredential = await bcrypt.hash(userCredentials.password, 10);
+      // console.log(hashedCredential);
+      // console.log(user.password);
+      const match: boolean = await bcrypt.compare(
+        userCredentials.password,
+        user.password,
+      );
+      if (match) {
+        const payload = { mail: user.mail, id: user.id };
+        const accessToken = this.jwtService.sign(payload);
+        return { token: accessToken, id: user.id };
+      } else {
+        throw new UnauthorizedException('Wrong credentials');
+      }
     } else {
       throw new NotFoundException('No user name with those credentials');
     }
