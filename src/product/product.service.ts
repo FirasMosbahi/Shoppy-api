@@ -5,6 +5,7 @@ import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import * as fs from 'fs';
+import { convertImageToBase64 } from '../utilities/base64-convertor';
 
 @Injectable()
 export class ProductService {
@@ -14,11 +15,18 @@ export class ProductService {
   ) {}
 
   async findAll(): Promise<Product[]> {
-    return await this.productRepository.find();
+    const products = await this.productRepository.find();
+    const photoConvertedProducts = products.map((p) => {
+      const decodedPhoto = convertImageToBase64(p.photo);
+      return { ...p, photo: decodedPhoto };
+    });
+    return photoConvertedProducts;
   }
 
   async findOne(id: string): Promise<Product> {
-    return await this.productRepository.findOne({ where: { id } });
+    const product = await this.productRepository.findOne({ where: { id } });
+    const productEncodedImage = convertImageToBase64(product.photo);
+    return { ...product, photo: productEncodedImage };
   }
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
